@@ -1,0 +1,89 @@
+import React, { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
+import Cards from './Cards';
+
+function SearchBar({ courses, tutors }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCourses, setSelectedCourses] = useState([]);
+
+  function handleSearch(searchTerm, selectedCourses) {
+    const filteredTutors = tutors.filter(
+      (tutor) =>
+        tutor.name.includes(searchTerm) && (selectedCourses.length === 0 || selectedCourses.includes(tutor.course))
+    );
+
+    return filteredTutors;
+  }
+
+  function handleVisibility(filteredTutors) {
+    const visibleTutors = filteredTutors.map((tutor) => tutor.name);
+    return visibleTutors;
+  }
+
+  function handleTermChange(event) {
+    setSearchTerm(event.target.value);
+  }
+
+  function handleCourseChange(event) {
+    const newSelectedCoursesArray = [...selectedCourses];
+
+    if (event.target.checked) {
+      newSelectedCoursesArray.push(event.target.value);
+    } else {
+      const index = newSelectedCoursesArray.indexOf(event.target.value);
+      if (index !== -1) {
+        newSelectedCoursesArray.splice(index, 1);
+      }
+    }
+
+    setSelectedCourses(newSelectedCoursesArray);
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const filteredTutors = handleSearch(searchTerm, selectedCourses);
+    const visibleTutors = handleVisibility(filteredTutors);
+    setSelectedTutors(visibleTutors);
+  }
+
+  const [selectedTutors, setSelectedTutors] = useState([]);
+
+  return (
+    <div>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Control type="text" placeholder="Search..." onChange={handleTermChange} value={searchTerm} />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formBasicCheckbox">
+          {courses.map((course) => (
+            <Form.Check
+              type="checkbox"
+              id={course}
+              label={course}
+              onChange={handleCourseChange}
+              value={course}
+              key={course}
+            />
+          ))}
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
+
+      <div className="container">
+        {tutors.map((tutor) => (
+          <Cards
+            key={tutor.name}
+            image={tutor.image}
+            title={tutor.name}
+            content={tutor.course}
+            isVisible={selectedTutors.includes(tutor.name)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default SearchBar;
