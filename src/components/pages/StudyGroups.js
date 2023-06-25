@@ -17,7 +17,7 @@ function StudyGroups() {
     <div>
 
     <h3 className='text-center'>Our Study Groups</h3>
-    
+           
     <div className='row'>
       <div className='col-md-3'>
         <h4>Course</h4>
